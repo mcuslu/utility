@@ -1,0 +1,37 @@
+ public sealed class ConvertHelper
+    {
+        public static string ConvertToPdf(string FileName)
+        {
+            string pdfFileName = FileName.Replace(".xlsx", ".pdf").Replace(".xls", ".pdf");
+
+            if (File.Exists(pdfFileName))
+            {
+                File.Delete(pdfFileName);
+            }
+
+            Microsoft.Office.Interop.Excel.Application app = new Microsoft.Office.Interop.Excel.Application
+            {
+                Visible = false,
+                DisplayAlerts = false
+            };
+
+            Microsoft.Office.Interop.Excel.Workbook wb = app.Workbooks.Open(FileName, ReadOnly: true);
+            Microsoft.Office.Interop.Excel.Worksheet ws = wb.ActiveSheet;
+            ws.PageSetup.Orientation = Microsoft.Office.Interop.Excel.XlPageOrientation.xlLandscape;
+            ws.PageSetup.PaperSize = Microsoft.Office.Interop.Excel.XlPaperSize.xlPaperLetter;
+            ws.PageSetup.Zoom = false;
+            ws.PageSetup.FitToPagesTall = 1;
+            ws.PageSetup.FitToPagesWide = 1;
+            ws.PageSetup.BottomMargin = 5;
+            ws.PageSetup.TopMargin = 5;
+            ws.PageSetup.LeftMargin = 5;
+            ws.PageSetup.RightMargin = 5;
+            ws.ExportAsFixedFormat(Microsoft.Office.Interop.Excel.XlFixedFormatType.xlTypePDF, pdfFileName);
+            wb.Close();
+            app.Quit();
+
+            return pdfFileName;
+        }
+
+    }
+}
